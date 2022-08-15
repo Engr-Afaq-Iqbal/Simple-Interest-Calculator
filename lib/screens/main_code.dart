@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 //import 'dart:html';
 //import 'dart:ui';
@@ -14,6 +16,16 @@ class _SICreate extends State<SIApp> {
   var _currentitemselected = 'Rupees';
   final _padding = 5.0;
 
+  TextEditingController principalcontroller = TextEditingController();
+  TextEditingController ratecontroller = TextEditingController();
+  TextEditingController termcontroller = TextEditingController();
+
+  var displayresult = '';
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +40,7 @@ class _SICreate extends State<SIApp> {
             Padding(
                 padding: EdgeInsets.only(top: _padding, bottom: _padding),
                 child: TextField(
+                  controller: principalcontroller,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       labelText: 'Principal',
@@ -39,6 +52,7 @@ class _SICreate extends State<SIApp> {
             Padding(
                 padding: EdgeInsets.only(top: _padding, bottom: _padding),
                 child: TextField(
+                  controller: ratecontroller,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       labelText: 'Rate of Interest',
@@ -53,6 +67,7 @@ class _SICreate extends State<SIApp> {
                   children: <Widget>[
                     Expanded(
                         child: TextField(
+                      controller: termcontroller,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                           labelText: 'Term',
@@ -88,22 +103,44 @@ class _SICreate extends State<SIApp> {
                     Expanded(
                         child: RaisedButton(
                       child: Text("Calculate"),
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          this.displayresult = calculatetotalreturns();
+                        });
+                      },
                     )),
                     Expanded(
                         child: RaisedButton(
-                      child: Text("Calculate"),
-                      onPressed: () {},
+                      child: Text("Reset"),
+                      onPressed: () {
+                        setState(() {
+                          principalcontroller.text = '';
+                          ratecontroller.text = '';
+                          termcontroller.text = '';
+                          displayresult = '';
+                          _currentitemselected = 'Rupees';
+                        });
+                      },
                     ))
                   ],
                 )),
             Padding(
               padding: EdgeInsets.only(top: 5.0, bottom: 5.0),
-              child: Text("Todo Text"),
+              child: Text(this.displayresult),
             )
           ],
         ),
       ),
     );
+  }
+
+  String calculatetotalreturns() {
+    double principal = double.parse(principalcontroller.text);
+    double rate = double.parse(ratecontroller.text);
+    double term = double.parse(termcontroller.text);
+    double totalinterest = principal + (principal * term * rate) / 100;
+    String result =
+        'After $term years, your investment will be worth $totalinterest $_currentitemselected';
+    return result;
   }
 }
